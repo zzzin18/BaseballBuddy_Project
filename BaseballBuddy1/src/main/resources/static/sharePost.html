@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>나눔글 작성</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<header>
+  <h1>게시글 작성하기</h1>
+</header>
+
+<main>
+  <div class="post-form">
+    <h2>나눔글 작성</h2>
+    <form>
+      <!-- 제목, 내용 -->
+      <label for="title">제목:</label>
+      <input type="text" id="title" name="title" required>
+
+      <label for="content">내용:</label>
+      <textarea id="content" name="content" rows="6" required></textarea>
+
+      <!-- 이미지 업로드 -->
+      <label for="image">사진 첨부:</label>
+      <input type="file" id="image" name="image" accept="image/*">
+
+      <!-- 제출 -->
+      <button type="submit" class="btn">작성 완료</button>
+    </form>
+  </div>
+</main>
+</body>
+</html>

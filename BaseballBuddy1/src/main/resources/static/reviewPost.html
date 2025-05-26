@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>구장 후기 작성</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<header>
+    <div class="header-content">
+        <h1>게시글 작성하기</h1>
+    </div>
+</header>
+
+<main>
+    <div>
+        <h2>구장 후기 작성</h2>
+        <form>
+            <!-- 구장 선택 -->
+            <label for="stadium">구장 선택:</label>
+            <select id="stadium" name="stadium" required>
+                <option value="">-- 구장을 선택하세요 --</option>
+                <option value="잠실">인천</option>
+                <option value="사직">고척</option>
+                <option value="문학">잠실</option>
+                <option value="대구">수원</option>
+                <option value="수원">대전</option>
+                <option value="수원">대구</option>
+                <option value="수원">광주</option>
+                <option value="수원">부산</option>
+                <option value="수원">창원</option>
+                <option value="수원">기타</option>
+            </select>
+
+            <!-- 필터 선택 -->
+            <fieldset style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <legend>카테고리 (1개 선택)</legend>
+                <label><input type="radio" name="filter" value="1루" required>1루</label>
+                <label><input type="radio" name="filter" value="3루">3루</label>
+                <label><input type="radio" name="filter" value="외야">외야</label>
+                <label><input type="radio" name="filter" value="음식">음식</label>
+                <label><input type="radio" name="filter" value="공용시설">공용시설</label>
+                <label><input type="radio" name="filter" value="주차">주차</label>
+                <label><input type="radio" name="filter" value="굿즈샵">굿즈샵</label>
+                <label><input type="radio" name="filter" value="기타">기타</label>
+            </fieldset>
+
+            <!-- 제목, 내용 -->
+            <label for="title">제목:</label>
+            <input type="text" id="title" name="title" required>
+
+            <label for="content">내용:</label>
+            <textarea id="content" name="content" rows="6" required></textarea>
+
+            <!-- 이미지 업로드 -->
+            <label for="image">사진 첨부:</label>
+            <input type="file" id="image" name="image" accept="image/*">
+
+            <!-- 제출 -->
+            <button type="submit" class="btn">작성 완료</button>
+        </form>
+    </div>
+</main>
+</body>
+</html>

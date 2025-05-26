@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>직관 모집 게시판</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <h1>직관 모집 게시판</h1>
+      <div class="auth-buttons">
+        <a href="/login.html" class="btn">로그인</a>
+        <a href="/signup.html" class="btn">회원가입</a>
+      </div>
+    </div>
+  </header>
+  <main>
+
+    <!-- 글쓰기 버튼 -->
+    <div class="write-button">
+      <a href="/sharePost.html">
+        <button>글 작성</button>
+      </a>
+    </div>
+
+
+    <div class="post-list">
+      <h2>게시글 목록</h2>
+      <ul>
+        <li><a href="postDetail.html?id=1">[잠실] 5월 7일 같이보실분!!! </a></li>
+        <li><a href="postDetail.html?id=2">[인천] 다음주 평일 3연전 같이 보실 분</a></li>
+        <li><a href="postDetail.html?id=3">[대구] 오늘 3루 외야에서 같이 응원해요~</a></li>
+      </ul>
+    </div>
+  </main>
+
+  <script>
+    const isLoggedIn = false;
+
+    if (isLoggedIn) {
+        document.getElementById('write-button').style.display = 'block';
+    } else {
+        document.getElementById('write-button').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

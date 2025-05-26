@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>구장 후기 게시판</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<header>
+    <h1 class="board-title">구장 후기 게시판</h1>
+</header>
+
+<main>
+    <!-- 구장 선택 -->
+    <div class="stadium-buttons">
+        <button class="stadium-btn" onclick="filterByStadium('구장1')">인천</button>
+        <button class="stadium-btn" onclick="filterByStadium('구장1')">고척</button>
+        <button class="stadium-btn" onclick="filterByStadium('구장2')">잠실</button>
+        <button class="stadium-btn" onclick="filterByStadium('구장3')">수원</button>
+        <button class="stadium-btn" onclick="filterByStadium('구장1')">대전</button>
+        <button class="stadium-btn" onclick="filterByStadium('구장1')">대구</button>
+        <button class="stadium-btn" onclick="filterByStadium('구장1')">광주</button>
+        <button class="stadium-btn" onclick="filterByStadium('구장1')">부산</button>
+        <button class="stadium-btn" onclick="filterByStadium('구장1')">창원</button>
+        <button class="stadium-btn" onclick="filterByStadium('구장1')">기타</button>
+    </div>
+
+    <!-- 필터 영역 -->
+    <div class="filter-section">
+        <label><input type="checkbox" value="1루">1루</label>
+        <label><input type="checkbox" value="3루">3루</label>
+        <label><input type="checkbox" value="외야">외야</label>
+        <label><input type="checkbox" value="음식">음식</label>
+        <label><input type="checkbox" value="공용시설">공용시설</label>
+        <label><input type="checkbox" value="주차">주차</label>
+        <label><input type="checkbox" value="굿즈샵">굿즈샵</label>
+        <label><input type="checkbox" value="기타">기타</label>
+    </div>
+    <!-- 글 작성 버튼 -->
+    <div class="write-button">
+        <a href="/reviewPost.html">
+            <button>글 작성</button>
+        </a>
+    </div>
+
+    <div class="post-list">
+        <div class="post">
+            <p><strong>사용자1:</strong> 레드석 자리 생각보다 편하네요</p>
+            <p>작성내용</p>
+            <img src="/images/example1.jpg" alt="좌석 이미지">
+        </div>
+    </div>
+    <div class="post-list">
+        <div class="post">
+            <p><strong>사용자2:</strong> 오늘은 사람 별로 없어서 편했어요!!</p>
+            <p>작성내용</p>
+        </div>
+    </div>
+
+
+</main>
+</body>
+</html>
