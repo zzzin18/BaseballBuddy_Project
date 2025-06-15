@@ -14,6 +14,9 @@ import java.util.List;
 public class CommentService {
     private final CommentRepository commentRepository;
 
+    public List<Comment> getCommentsByPostId(String postID) {
+        return commentRepository.findByAttendPost_PostId(postID);
+    }
     public Comment addComment(String commentDetail, Member member, AttendPost post) {
         Comment comment = new Comment(commentDetail, member, post);
         return commentRepository.save(comment);
@@ -29,8 +32,8 @@ public class CommentService {
         comment.updateComment(newDetail);
         commentRepository.save(comment);
     }
-    public void deleteComment(String commentID, Member currentUser) {
-        Comment comment = commentRepository.findById(commentID)
+    public void deleteComment(String commentId, Member currentUser) {
+        Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
 
         if (!comment.canModify(currentUser)) {

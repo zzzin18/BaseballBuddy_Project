@@ -1,27 +1,64 @@
 package com.example.BaseballBuddy1.domain.member;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Getter @Setter
-public class Member {
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Member implements UserDetails {
+
     @Id
-    private String MemberID;
-    private String MemberPW;
-    private String nickname;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, nullable = false)
+    private String memberId;
+
+    @Column(nullable = false)
+    private String memberPw;
+
+    @Column(nullable = false)
     private String email;
 
-    protected Member() {
-    } // JPA 기본 생성자
+    @Column(nullable = false, unique = true)
+    private String nickname;
 
-    // 생성자
-    public Member(String MemberID, String MemberPW, String nickname, String email) {
-        this.MemberID = MemberID;
-        this.MemberPW = MemberPW;
-        this.nickname = nickname;
-        this.email = email;
+    private String role = "ROLE_USER";
+
+    // UserDetails 구현부
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role));
     }
 
+    @Override
+    public String getPassword() {
+        return memberPw;
+    }
+
+    @Override
+    public String getUsername() {
+        return memberId;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() { return true; }
+
+    @Override
+    public boolean isAccountNonLocked() { return true; }
+
+    @Override
+    public boolean isCredentialsNonExpired() { return true; }
+
+    @Override
+    public boolean isEnabled() { return true; }
 }

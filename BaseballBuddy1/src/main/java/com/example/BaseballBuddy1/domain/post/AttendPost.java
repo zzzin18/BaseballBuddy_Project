@@ -1,51 +1,55 @@
 package com.example.BaseballBuddy1.domain.post;
 
+import com.example.BaseballBuddy1.domain.Stadium;
+import com.example.BaseballBuddy1.domain.SeatType;
+import com.example.BaseballBuddy1.domain.CheerStyle;
+import com.example.BaseballBuddy1.domain.GroupType;
 import com.example.BaseballBuddy1.domain.member.Member;
 
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Entity
+@Getter @Setter
 public class AttendPost extends Post{
-    private LocalDateTime postDeadline;
+    @Column(name = "attend_date")
+    private LocalDateTime attendDate;
 
-    public AttendPost(String postTitle, String postDetail, LocalDateTime postDeadline, Member postMember) {
+    private Stadium stadium;
+    private CheerStyle cheerStyle;
+    private SeatType seatType;
+    private GroupType groupType;
+
+    protected AttendPost() {
+    }
+
+    public AttendPost(String postTitle, String postDetail, Member postMember, LocalDateTime attendDate) {
         super(postTitle, postDetail, postMember);
-        this.postDeadline = postDeadline;
+        this.attendDate = attendDate;
     }
-
-    public LocalDateTime getPostDeadline() {
-        return postDeadline;
-    }
+/*
     public boolean isExpired() {
-        return LocalDateTime.now().isAfter(postDeadline);
+        return LocalDateTime;
+    }*/
+
+    public void updateAttendPost(String postTitle, String postDetail) {
+        super.updatePost(postTitle, postDetail);
+
     }
 
-    public void updateAttendPost(String postTitle, String postDetail, LocalDateTime postDeadline) {
-        if (!isExpired()) {
-            super.updatePost(postTitle, postDetail);
-            this.postDeadline = postDeadline;
-        } else {
-            throw new IllegalStateException("모집 마감 기한이 끝난 글은 수정할 수 없습니다.");
-        }
-    }
-
-    @Override
     public boolean canModify(Member currentMember) {
-        return !isExpired();
+        return super.canModify(currentMember);
     }
-    @Override
-    public void updatePost(String postTitle, String postDetail) {
-        if (!isExpired()) {
-            super.setPostTitle(postTitle);
-            super.setPostDetail(postDetail);
-        } else {
-            throw new IllegalStateException("마감된 글은 수정할 수 없습니다.");
-        }
+
+
+    public String getNickname() {
+        return getPostMember().getNickname();
     }
-    @Override
-    public boolean delete(Member currentMember) {
-        return !isExpired();
-    }
+
 }
 

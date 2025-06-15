@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>추천 결과</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+        button { background-color: #2563eb; color: white; border: none; padding: 8px 12px; cursor: pointer; }
+        ul { margin-top: 20px; padding-left: 20px; }
+        li { margin-bottom: 10px; }
+        a { color: #2563eb; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<h2>직관 추천 결과</h2>
+<div id="resultContainer"></div>
+<button onclick="location.href='/attendRecommendQuestion.html'">다시 설문하기</button>
+
+<script>
+    const resultContainer = document.getElementById('resultContainer');
+    const data = JSON.parse(localStorage.getItem('recommendResults') || '[]');
+
+    if (!data || data.length === 0) {
+      resultContainer.innerHTML = '<p>추천 결과가 없습니다.</p>';
+    } else {
+      const ul = document.createElement('ul');
+      data.forEach(post => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        const postDate = post.postDate || post.attendDate || '알 수 없음';
+
+        a.href = `/attend-calendar.html?postId=${post.postId}&date=${postDate}`;
+        a.textContent = post.title;
+
+        li.appendChild(a);
+        li.insertAdjacentHTML('beforeend', ` - ${postDate} / ${post.stadium}`);
+        ul.appendChild(li);
+      });
+      resultContainer.appendChild(ul);
+    }
+
+</script>
+
+</body>
+</html>

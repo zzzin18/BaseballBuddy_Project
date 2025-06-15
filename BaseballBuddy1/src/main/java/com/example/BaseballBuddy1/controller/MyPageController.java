@@ -1,8 +1,8 @@
 package com.example.BaseballBuddy1.controller;
 
 import com.example.BaseballBuddy1.controller.dto.AttendPostResponse;
+import com.example.BaseballBuddy1.controller.dto.CommentResponse;
 import com.example.BaseballBuddy1.controller.dto.ReviewPostResponse;
-import com.example.BaseballBuddy1.controller.dto.SharePostResponse;
 import com.example.BaseballBuddy1.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,18 +30,13 @@ public class MyPageController {
         return ResponseEntity.ok(myPageService.getReviewPosts(memberId));
     }
 
-    @GetMapping("/{memberId}/shares")
-    public ResponseEntity<List<SharePostResponse>> getSharePosts(@PathVariable String memberId) {
-        return ResponseEntity.ok(myPageService.getSharePosts(memberId));
-    }
-
     @GetMapping("/{memberId}/comments")
     public ResponseEntity<List<CommentResponse>> getComments(@PathVariable String memberId) {
         return ResponseEntity.ok(myPageService.getComments(memberId));
     }
 
     @GetMapping("/{memberId}/likes")
-    public ResponseEntity<List<SharePostResponse>> getLikedPosts(@PathVariable String memberId) {
-        return ResponseEntity.ok(myPageService.getLikedSharePosts(memberId));
+    public ResponseEntity<List<ReviewPostResponse>> getLikedPosts(@PathVariable String memberId) {
+        return ResponseEntity.ok(myPageService.getLikedReviewPosts(memberId));
     }
 }

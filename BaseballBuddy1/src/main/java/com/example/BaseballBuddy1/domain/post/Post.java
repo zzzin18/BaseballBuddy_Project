@@ -12,16 +12,16 @@ import lombok.*;
 @Getter @Setter
 public abstract class Post {
     @Id
-    private String postID;
+    private String postId;
     @Setter
     private String postTitle;
 
-    @Setter
-    @ManyToOne
-    @JoinColumn(name="memberID")
-    private Member postMember;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    protected Member postMember;
     @Setter
     private String postDetail;
+    @Getter
     private LocalDateTime postDate;
 
     @Column(updatable = false)
@@ -30,7 +30,7 @@ public abstract class Post {
     protected Post() {}
 
     protected Post(String postTitle, String postDetail, Member postMember) {
-        this.postID = UUID.randomUUID().toString();
+        this.postId = UUID.randomUUID().toString();
         this.postTitle = postTitle;
         this.postDetail = postDetail;
         this.postDate = LocalDateTime.now();
@@ -52,4 +52,5 @@ public abstract class Post {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
+
 }

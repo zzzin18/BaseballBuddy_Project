@@ -1,67 +1,159 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>내 정보</title>
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
-<header>
-    <h1>내 정보</h1>
-</header>
-<body>
-<h2>내 정보</h2>
-<!-- 버튼 -->
-<div id="tabs">
-    <button class="tab-button active-tab" onclick="showTab('attends')">직관 모집 글</button>
-    <button class="tab-button" onclick="showTab('comments')">직관 모집 댓글</button>
-    <button class="tab-button" onclick="showTab('reviews')">구장 후기 글</button>
-    <button class="tab-button" onclick="showTab('shares')">나눔 글</button>
-    <button class="tab-button" onclick="showTab('likes')">좋아요</button>
-</div>
+    <style>
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          margin: 0;
+          padding: 0;
+          background-color: #f5f5f5;
+        }
 
-<!-- 내용 -->
-<div id="tab-content">
-    <div id="attends" class="tab-section">
-        <div class="post">
-            <div class="post-title">[잠실] [1루] 자리 진짜 좋아요</div>
-            <div class="post-date">2025-05-07</div>
-            <div class="post-actions">
-                <button>수정</button>
-                <button>삭제</button>
+        .myinfo-container {
+          max-width: 800px;
+          margin: 2rem auto;
+          padding: 1rem;
+          background-color: #fff;
+          border-radius: 8px;
+          box-shadow: 0 0 8px rgba(0,0,0,0.05);
+        }
+
+        header h1 {
+          text-align: center;
+          margin-bottom: 2rem;
+        }
+
+        #tabs {
+          display: flex;
+          justify-content: space-around;
+          margin-bottom: 1.5rem;
+        }
+
+        .tab-button {
+          flex: 1;
+          padding: 0.75rem;
+          background-color: #f1f1f1;
+          border: none;
+          border-bottom: 3px solid transparent;
+          font-weight: bold;
+          cursor: pointer;
+          transition: 0.3s;
+        }
+
+        .tab-button:hover {
+          background-color: #ddd;
+        }
+
+        .active-tab {
+          border-bottom: 3px solid #646cff;
+          background-color: #fff;
+          color: #646cff;
+        }
+
+        #tab-content {
+          padding: 1rem;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          background-color: #fafafa;
+        }
+
+        .tab-section {
+          display: none;
+        }
+
+        .tab-section.active {
+          display: block;
+        }
+
+        .post {
+          padding: 1rem;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          background-color: white;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+          margin-bottom: 1rem;
+        }
+
+        .post-title {
+          font-size: 1.1rem;
+          font-weight: bold;
+          margin-bottom: 0.5rem;
+        }
+
+        .post-date {
+          color: #777;
+          font-size: 0.9rem;
+          margin-bottom: 0.75rem;
+        }
+
+        .post-actions button {
+          margin-right: 0.5rem;
+          padding: 0.5rem 1rem;
+          background-color: #646cff;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+
+        .post-actions button:hover {
+          background-color: #535bf2;
+        }
+    </style>
+</head>
+<body>
+<div class="myinfo-container">
+    <header>
+        <h1>내 정보</h1>
+    </header>
+
+    <div id="tabs">
+        <button class="tab-button active-tab" onclick="showTab('attends')">직관 모집 글</button>
+        <button class="tab-button" onclick="showTab('comments')">직관 모집 댓글</button>
+        <button class="tab-button" onclick="showTab('reviews')">구장 후기 글</button>
+        <button class="tab-button" onclick="showTab('likes')">좋아요</button>
+    </div>
+
+    <div id="tab-content">
+        <div id="attends" class="tab-section active">
+            <div class="post">
+                <div class="post-title">[잠실] [1루] 자리 진짜 좋아요</div>
+                <div class="post-date">2025-05-07</div>
+                <div class="post-actions">
+                    <button>수정</button>
+                    <button>삭제</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="comments" class="tab-section" style="display: none;">
-        <p>작성한 댓글이 여기에 나와요.</p>
-    </div>
+        <div id="comments" class="tab-section">
+            <p>작성한 댓글이 여기에 나와요.</p>
+        </div>
 
-    <div id="reviews" class="tab-section" style="display: none;">
-        <p>후기 항목이 여기에 나와요.</p>
-    </div>
+        <div id="reviews" class="tab-section">
+            <p>후기 항목이 여기에 나와요.</p>
+        </div>
 
-    <div id="shares" class="tab-section" style="display: none;">
-        <p>나눔 게시글 여기에 나와요.</p>
-    </div>
-
-    <div id="likes" class="tab-section" style="display: none;">
-        <p>찜한 항목이 여기에 나와요.</p>
+        <div id="likes" class="tab-section">
+            <p>찜한 항목들</p>
+        </div>
     </div>
 </div>
 
 <script>
     function showTab(tabId) {
-      const sections = document.querySelectorAll('.tab-section');
-      const buttons = document.querySelectorAll('.tab-button');
+      const buttons = document.querySelectorAll(".tab-button");
+      const sections = document.querySelectorAll(".tab-section");
 
-      sections.forEach(sec => sec.style.display = 'none');
-      document.getElementById(tabId).style.display = 'block';
+      buttons.forEach(btn => btn.classList.remove("active-tab"));
+      sections.forEach(sec => sec.classList.remove("active"));
 
-      buttons.forEach(btn => btn.classList.remove('active-tab'));
-      event.target.classList.add('active-tab');
+      document.querySelector(`.tab-button[onclick*="${tabId}"]`).classList.add("active-tab");
+      document.getElementById(tabId).classList.add("active");
     }
 </script>
-
 </body>
 </html>

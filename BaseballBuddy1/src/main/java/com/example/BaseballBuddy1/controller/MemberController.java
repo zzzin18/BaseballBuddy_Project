@@ -1,37 +1,60 @@
 package com.example.BaseballBuddy1.controller;
 
-import com.example.BaseballBuddy1.controller.dto.RegisterationRequest;
 import com.example.BaseballBuddy1.domain.member.Member;
 import com.example.BaseballBuddy1.service.MemberService;
-
-import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import lombok.RequiredArgsConstructor;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/members")
 @RequiredArgsConstructor
 public class MemberController {
+
     private final MemberService memberService;
 
-    // 회원가입 POST 요청
     @PostMapping("/registration")
-    public ResponseEntity<String> registeration(@RequestBody RegisterationRequest RegisterationRequest) {
+    public ResponseEntity<?> registration(@RequestBody Member member) {
         try {
-            Member member = new Member(
-                    RegisterationRequest.getID(),
-                    RegisterationRequest.getPW(),
-                    RegisterationRequest.getNickname(),
-                    RegisterationRequest.getEmail()
-            );
-
-            memberService.registerMember(member);
-
-            return ResponseEntity.ok("회원가입 성공");
+            Member saved = memberService.registration(member);
+            return ResponseEntity.ok(saved);
         } catch (IllegalStateException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("서버 오류 발생");
+            return ResponseEntity
+                    .badRequest()
+                    .body(Map.of("error", e.getMessage()));
         }
     }
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentMemberInfo(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Member member = (Member) authentication.getPrincipal();
+        return ResponseEntity.ok(Map.of(
+                "id", member.getId(),
+                "memberId", member.getMemberId(),
+                "nickname", member.getNickname()
+        ));
+    }
+
+    @GetMapping("/check-id")
+    public ResponseEntity<Boolean> checkSameId(@RequestParam String memberId) {
+        System.out.println("중복 체크 요청: " + memberId);
+        boolean exists = memberService.getMemberById(memberId).isPresent();
+        System.out.println("중복 여부: " + exists);
+        return ResponseEntity.ok(exists);  // 중복이면 false, 아니면 true
+    }
+
+    @GetMapping("/check-email")
+    public ResponseEntity<Boolean> checkDuplicateEmail(@RequestParam String email) {
+        boolean exists = memberService.getMemberByEmail(email).isPresent();
+        return ResponseEntity.ok(exists);
+    }
+
+
 }

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>Baseball Buddies</title>
+    <style>
+        .header-content {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1rem;
+          background-color: #eee;
+        }
+        .auth-buttons button,
+        .category-buttons button {
+          margin: 0 0.5rem;
+          padding: 0.5rem 1rem;
+          text-decoration: none;
+          color: white;
+          background-color: #646cff;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+        .auth-buttons button:hover,
+        .category-buttons button:hover {
+          background-color: #535bf2;
+        }
+        .category-buttons {
+          margin: 2rem;
+          text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <h1>Baseball Buddies</h1>
+        <div class="auth-buttons" id="auth-buttons">
+            <!-- 로그인/회원가입 or 내 정보 버튼 여기에 -->
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="category-buttons">
+        <button onclick="location.href='/attendCalendar'">직관 모집 달력</button>
+        <button onclick="location.href='/attendRecommendQuestion'">직관 친구 찾기</button>
+        <button onclick="location.href='/review'">구장 후기 게시판</button>
+    </div>
+</main>
+
+<script>
+
+    let isLoggedIn = false;
+
+    function loadAuthButtons() {
+    fetch("/members/me", {
+      method: "GET",
+      credentials: "include",
+      cache: "no-cache",
+    })
+      .then((res) => {
+        if (res.redirected) {
+          throw new Error("리다이렉트 됨 (비로그인)");
+        }
+        if (res.ok) {
+          return res.json();
+        }
+        throw new Error("로그인 안됨");
+      })
+      .then((data) => {
+        isLoggedIn = true; // 로그인 상태 저장
+        document.getElementById("auth-buttons").innerHTML = `
+          <a href="/myInfo.html">내 정보</a>
+          <button onclick="logout()">로그아웃</button>
+        `;
+      })
+      .catch(() => {
+        isLoggedIn = false; // 비로그인 상태 저장
+        document.getElementById("auth-buttons").innerHTML = `
+          <a href="/login.html">로그인</a>
+          <a href="/registration.html">회원가입</a>
+        `;
+      });
+  }
+
+  function logout() {
+    fetch("/members/logout", {
+      method: "POST",
+      credentials: "include",
+    })
+      .then((res) => {
+        if (res.ok) {
+          alert("로그아웃 되었습니다.");
+          loadAuthButtons(); // 버튼 새로고침
+        } else {
+          alert("로그아웃 실패");
+        }
+      })
+      .catch(() => alert("오류 발생"));
+  }
+
+    // 페이지 처음 로드 시 실행
+    loadAuthButtons();
+</script>
+</body>
+</html>

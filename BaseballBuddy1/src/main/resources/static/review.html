@@ -1,63 +1,280 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="logged-in-user-id" content="${loggedInUserId}" />
     <title>구장 후기 게시판</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        /* 스타일은 그대로 유지 */
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          margin: 0;
+          padding: 1.5rem;
+          background-color: #f3f4f6;
+          color: #111827;
+        }
+        main {
+          max-width: 800px;
+          margin: auto;
+        }
+        h1 {
+          font-size: 1.75rem;
+          font-weight: 700;
+          margin-bottom: 1.5rem;
+          text-align: center;
+          color: #1f2937;
+        }
+        .flex {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          margin-bottom: 1rem;
+          justify-content: center;
+        }
+        button {
+          cursor: pointer;
+          border: 1px solid #d1d5db;
+          border-radius: 9999px;
+          padding: 0.4rem 0.9rem;
+          background-color: white;
+          font-size: 0.9rem;
+          transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+        }
+        button:hover {
+          background-color: #e5e7eb;
+        }
+        button.selected {
+          background-color: #3b82f6;
+          color: white;
+          border-color: #3b82f6;
+        }
+        label {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          font-size: 0.95rem;
+          color: #374151;
+          cursor: pointer;
+        }
+        .post {
+          background-color: white;
+          padding: 1rem;
+          border: 1px solid #e5e7eb;
+          border-radius: 0.75rem;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+          margin-bottom: 1rem;
+        }
+        .post img {
+          margin-top: 0.75rem;
+          max-width: 100%;
+          border-radius: 0.5rem;
+        }
+        .write-btn {
+          background-color: #10b981;
+          color: white;
+          border: none;
+          border-radius: 0.5rem;
+          padding: 0.6rem 1.2rem;
+          font-size: 1rem;
+          font-weight: 600;
+          display: block;
+          margin: 1rem auto;
+        }
+        .write-btn:hover {
+          background-color: #059669;
+        }
+        #posts-container {
+          margin-top: 1rem;
+        }
+        .like-btn {
+          cursor: pointer;
+          background-color: transparent;
+          border: none;
+          font-size: 1rem;
+          color: #999;
+          margin-top: 0.8rem;
+          user-select: none;
+          transition: color 0.3s ease;
+        }
+        .like-btn.liked {
+          color: #ef4444; /* 빨간색 */
+        }
+        .like-btn:hover {
+          color: #ef4444;
+        }
+    </style>
 </head>
 <body>
-<header>
-    <h1 class="board-title">구장 후기 게시판</h1>
-</header>
-
 <main>
-    <!-- 구장 선택 -->
-    <div class="stadium-buttons">
-        <button class="stadium-btn" onclick="filterByStadium('구장1')">인천</button>
-        <button class="stadium-btn" onclick="filterByStadium('구장1')">고척</button>
-        <button class="stadium-btn" onclick="filterByStadium('구장2')">잠실</button>
-        <button class="stadium-btn" onclick="filterByStadium('구장3')">수원</button>
-        <button class="stadium-btn" onclick="filterByStadium('구장1')">대전</button>
-        <button class="stadium-btn" onclick="filterByStadium('구장1')">대구</button>
-        <button class="stadium-btn" onclick="filterByStadium('구장1')">광주</button>
-        <button class="stadium-btn" onclick="filterByStadium('구장1')">부산</button>
-        <button class="stadium-btn" onclick="filterByStadium('구장1')">창원</button>
-        <button class="stadium-btn" onclick="filterByStadium('구장1')">기타</button>
-    </div>
+    <h1>구장 후기 게시판</h1>
 
-    <!-- 필터 영역 -->
-    <div class="filter-section">
-        <label><input type="checkbox" value="1루">1루</label>
-        <label><input type="checkbox" value="3루">3루</label>
-        <label><input type="checkbox" value="외야">외야</label>
-        <label><input type="checkbox" value="음식">음식</label>
-        <label><input type="checkbox" value="공용시설">공용시설</label>
-        <label><input type="checkbox" value="주차">주차</label>
-        <label><input type="checkbox" value="굿즈샵">굿즈샵</label>
-        <label><input type="checkbox" value="기타">기타</label>
-    </div>
-    <!-- 글 작성 버튼 -->
-    <div class="write-button">
-        <a href="/reviewPost.html">
-            <button>글 작성</button>
-        </a>
-    </div>
+    <div id="stadium-buttons" class="flex"></div>
 
-    <div class="post-list">
-        <div class="post">
-            <p><strong>사용자1:</strong> 레드석 자리 생각보다 편하네요</p>
-            <p>작성내용</p>
-            <img src="/images/example1.jpg" alt="좌석 이미지">
-        </div>
-    </div>
-    <div class="post-list">
-        <div class="post">
-            <p><strong>사용자2:</strong> 오늘은 사람 별로 없어서 편했어요!!</p>
-            <p>작성내용</p>
-        </div>
-    </div>
+    <div id="filter-checkboxes" class="flex"></div>
 
+    <a href="/reviewPost.html">
+        <button class="write-btn">글 작성</button>
+    </a>
 
+    <div id="posts-container"></div>
 </main>
+
+<script>
+    const stadiumButtonsDiv = document.getElementById('stadium-buttons');
+const filterCheckboxesDiv = document.getElementById('filter-checkboxes');
+const postsContainer = document.getElementById('posts-container');
+
+const stadiumMap = {
+  INCHEON: "인천",
+  JAMSHIL: "잠실",
+  GOCHEOK: "고척",
+  SUWON: "수원",
+  DAEJEON: "대전",
+  DAEGU: "대구",
+  GWANGJU: "광주",
+  BUSAN: "부산",
+  CHANGWON: "창원",
+  ETC: "기타"
+};
+
+const filterTagMap = {
+  FIRSTBASE: "1루",
+  THIRDBASE: "3루",
+  OUTFIELD: "외야",
+  FOOD: "음식",
+  FACILITY: "공용시설",
+  PARKING: "주차",
+  GOODS: "굿즈샵",
+  ETC: "기타"
+};
+
+const stadiums = Object.keys(stadiumMap);
+const filters = Object.keys(filterTagMap);
+
+let selectedStadium = null;
+let selectedFilters = [];
+
+function renderStadiumButtons() {
+  stadiumButtonsDiv.innerHTML = '';
+  stadiums.forEach(stadium => {
+    const btn = document.createElement('button');
+    btn.textContent = stadiumMap[stadium];
+    btn.className = (selectedStadium === stadium) ? 'selected' : '';
+    btn.addEventListener('click', () => {
+      selectedStadium = (selectedStadium === stadium) ? null : stadium;
+      renderStadiumButtons();
+      fetchFilteredPosts();
+    });
+    stadiumButtonsDiv.appendChild(btn);
+  });
+}
+
+function renderFilterCheckboxes() {
+  filterCheckboxesDiv.innerHTML = '';
+  filters.forEach(filter => {
+    const label = document.createElement('label');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.value = filter;
+    checkbox.checked = selectedFilters.includes(filter);
+    checkbox.addEventListener('change', () => {
+      if (selectedFilters.includes(filter)) {
+        selectedFilters = selectedFilters.filter(f => f !== filter);
+      } else {
+        selectedFilters.push(filter);
+      }
+      fetchFilteredPosts();
+    });
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode(filterTagMap[filter]));
+    filterCheckboxesDiv.appendChild(label);
+  });
+}
+
+function fetchFilteredPosts() {
+  const params = new URLSearchParams();
+  if (selectedStadium) params.append("stadium", selectedStadium);
+  selectedFilters.forEach(f => params.append("filters", f));
+
+  fetch(`/review-posts/filter?${params.toString()}`)
+  .then(res => {
+    if (!res.ok) {
+      console.error("응답 실패 상태:", res.status);
+      return Promise.reject("서버 오류");
+    }
+    return res.json(); // ← 이제 안전하게 호출 가능
+  })
+  .then(data => {
+    console.log("받은 데이터:", data);
+    renderPosts(data);
+  })
+  .catch(err => {
+    console.error("fetch 에러:", err);
+    postsContainer.textContent = "게시글을 불러오지 못했습니다.";
+  });
+  }
+
+
+
+function renderPosts(posts) {
+  postsContainer.innerHTML = '';
+  if (posts.length === 0) {
+    postsContainer.textContent = '조건에 맞는 게시글이 없습니다.';
+    return;
+  }
+
+  posts.forEach(post => {
+    const postDiv = document.createElement('div');
+    postDiv.className = 'post';
+
+    const title = document.createElement('h3');
+    title.textContent = `[${stadiumMap[post.stadium] || post.stadium}] ${post.postTitle} - ${post.nickname || "익명"}`;
+    postDiv.appendChild(title);
+
+    const content = document.createElement('p');
+    content.innerHTML = (post.postDetail || '').replace(/\n/g, '<br>');
+    postDiv.appendChild(content);
+
+    //좋아요 버튼
+    const likeWrapper = document.createElement('div');
+    likeWrapper.style.display = 'flex';
+    likeWrapper.style.alignItems = 'center';
+    likeWrapper.style.marginTop = '0.6rem';
+
+    const likeBtn = document.createElement('button');
+    likeBtn.className = 'like-btn';
+    likeBtn.innerHTML = post.likedByCurrentUser ? '❤️' : '🤍';
+    if (post.likedByCurrentUser) likeBtn.classList.add('liked');
+
+    const likeCount = document.createElement('span');
+    likeCount.textContent = ` ${post.likeCount}`;
+    likeCount.style.marginLeft = '0.3rem';
+
+    likeBtn.addEventListener('click', async () => {
+      try {
+        const res = await fetch(`/review-posts/${post.postId}/like`, { method: 'PUT' });
+        if (!res.ok) throw new Error("좋아요 실패");
+        await fetchFilteredPosts(); // 다시 글 목록 갱신!
+      } catch (err) {
+        alert("로그인이 필요하거나 서버 오류입니다.");
+        console.error(err);
+      }
+    });
+
+    likeWrapper.appendChild(likeBtn);
+    likeWrapper.appendChild(likeCount);
+    postDiv.appendChild(likeWrapper);
+
+    postsContainer.appendChild(postDiv);
+  });
+}
+
+renderStadiumButtons();
+renderFilterCheckboxes();
+fetchFilteredPosts(); // 최초 로드 시 전체 불러오기
+
+</script>
+
 </body>
 </html>

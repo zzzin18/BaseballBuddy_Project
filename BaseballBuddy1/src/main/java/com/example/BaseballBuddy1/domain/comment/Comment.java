@@ -14,15 +14,14 @@ import java.util.UUID;
 @Getter @Setter
 public class Comment {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String commentID;
+    private String commentId = UUID.randomUUID().toString();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "memberId")
     private Member commentMember;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "attend_post_id")
+    @JoinColumn(name = "attendPostId")
     private AttendPost attendPost;
 
     private String commentDetail;
@@ -32,7 +31,7 @@ public class Comment {
 
     // 생성자
     public Comment(String commentDetail, Member commentMember, AttendPost attendPost) {
-        this.commentID = UUID.randomUUID().toString();
+        this.commentId = UUID.randomUUID().toString();
         this.commentDetail = commentDetail;
         this.commentMember = commentMember;
         this.attendPost = attendPost;
@@ -43,7 +42,7 @@ public class Comment {
         this.commentDetail = commentDetail;
     }
     public boolean canModify(Member currentUser) {
-        return commentMember.getMemberID().equals(currentUser.getMemberID());
+        return commentMember.getMemberId().equals(currentUser.getMemberId());
     }
     public void delete() {
         // 실삭제

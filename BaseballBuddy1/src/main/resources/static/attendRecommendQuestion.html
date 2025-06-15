@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>직관 추천 설문</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    label { display: block; margin-top: 15px; font-weight: bold; }
+    select, input[type="date"], textarea, button {
+      width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box;
+    }
+    button { background-color: #2563eb; color: white; border: none; cursor: pointer; }
+    button:disabled { background-color: #9ca3af; cursor: not-allowed; }
+    ul { margin-top: 20px; padding-left: 20px; }
+    li { margin-bottom: 10px; }
+    .error { color: red; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+<h2>직관 추천 설문</h2>
+
+<label for="date">1. 언제 보러 가실건가요?</label>
+<input type="date" id="date" />
+
+<label for="stadium">2. 어디 구장으로 가시나요?</label>
+<select id="stadium">
+  <option value="">선택하세요</option>
+  <option value="INCHEON">인천</option>
+  <option value="JAMSIL">잠실</option>
+  <option value="GOCHUK">고척</option>
+  <option value="SUWON">수원</option>
+  <option value="DAEJEON">대전</option>
+  <option value="DAEGU">대구</option>
+  <option value="GWANGJU">광주</option>
+  <option value="BUSAN">부산</option>
+  <option value="CHANGWON">창원</option>
+  <option value="ETC">기타</option>
+</select>
+
+<label for="seat">3. 좌석은 어디로 선택하실건가요?</label>
+<select id="seat">
+  <option value="">선택하세요</option>
+  <option value="INFIELD">내야</option>
+  <option value="OUTFIELD">외야</option>
+</select>
+
+<label for="cheerType">4. 응원 스타일은 어떻게 되시나요?</label>
+<select id="cheerType">
+  <option value="">선택하세요</option>
+  <option value="CHEER">응원중심</option>
+  <option value="COMMUNICATION">소통중심</option>
+</select>
+
+<label for="group">5. 혼자 가시나요, 아니면 일행이 있으신가요?</label>
+<select id="group">
+  <option value="">선택하세요</option>
+  <option value="ALONE">혼자</option>
+  <option value="GROUP">일행 있음</option>
+</select>
+
+<button id="submitBtn" disabled>추천받기</button>
+
+<p class="error" id="errorMsg"></p>
+
+<div id="recommendationsContainer"></div>
+
+<script>
+  const dateInput = document.getElementById('date');
+  const stadiumSelect = document.getElementById('stadium');
+  const seatSelect = document.getElementById('seat');
+  const cheerSelect = document.getElementById('cheerType');
+  const groupSelect = document.getElementById('group');
+  const submitBtn = document.getElementById('submitBtn');
+  const errorMsg = document.getElementById('errorMsg');
+  const recommendationsContainer = document.getElementById('recommendationsContainer');
+
+  // 입력값 체크해서 버튼 활성화 여부 결정
+  function checkCanSubmit() {
+    if (
+      dateInput.value &&
+      stadiumSelect.value &&
+      seatSelect.value &&
+      cheerSelect.value &&
+      groupSelect.value
+    ) {
+      submitBtn.disabled = false;
+    } else {
+      submitBtn.disabled = true;
+    }
+  }
+
+  [dateInput, stadiumSelect, seatSelect, cheerSelect, groupSelect].forEach(el =>
+    el.addEventListener('change', checkCanSubmit)
+  );
+
+  // 서버 요청 부분 주석 처리하고, 버튼 누르면 바로 결과 페이지 이동
+  /*
+  submitBtn.addEventListener('click', async () => {
+    errorMsg.textContent = '';
+    submitBtn.disabled = true;
+    submitBtn.textContent = '추천 중...';
+
+    try {
+      const response = await fetch('/api/attend-posts/recommend', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          date: dateInput.value,
+          stadium: stadiumSelect.value,
+          seatType: seatSelect.value,
+          cheerStyle: cheerSelect.value,
+          groupType: groupSelect.value
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('서버 요청 실패');
+      }
+
+      const data = await response.json();
+
+      localStorage.setItem('recommendResults', JSON.stringify(data));
+      window.location.href = '/attendRecommendResult.html';
+    } catch (e) {
+      errorMsg.textContent = e.message || '추천 글을 불러오는 데 실패했어요.';
+    } finally {
+      submitBtn.textContent = '추천받기';
+      checkCanSubmit();
+    }
+  });
+  */
+
+  submitBtn.addEventListener('click', () => {
+    window.location.href = '/attendRecommendResult.html';
+  });
+
+  checkCanSubmit(); // 초기 상태 체크
+</script>
+
+
+</body>
+</html>

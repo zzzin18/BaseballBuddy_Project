@@ -1,52 +1,48 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>로그인</title>
-    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-<div class="form-container">
-    <h2>로그인</h2>
-    <form method="post" onsubmit="handleLogin(event)">
-        <input type="text" name="username" placeholder="아이디" required>
-        <input type="password" name="password" placeholder="비밀번호" required>
-        <button type="submit">로그인</button>
-    </form>
-</div>
+<h1>로그인 페이지</h1>
+<form id="login-form">
+    <label for="username">아이디:</label>
+    <input type="text" id="username" required /><br />
+
+    <label for="password">비밀번호:</label>
+    <input type="password" id="password" required /><br />
+
+    <button type="submit">로그인</button>
+</form>
 
 <script>
-   function updateHeaderButtons() {
-   const loginBtn = document.getElementById('loginBtn');
-   const signupBtn = document.getElementById('signupBtn');
-   const myPageBtn = document.getElementById('myPageBtn');
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const memberId = document.getElementById("username").value;
+      const memberPw = document.getElementById("password").value;
 
-   if (isLoggedIn()) {
-     loginBtn.style.display = 'none';
-     signupBtn.style.display = 'none';
-     myPageBtn.style.display = 'inline-block';
-   } else {
-     loginBtn.style.display = 'inline-block';
-     signupBtn.style.display = 'inline-block';
-     myPageBtn.style.display = 'none';
-   }
- }
- window.onload = updateHeaderButtons;
+      const body = new URLSearchParams({ memberId, memberPw });
+      try {
+        const res = await fetch("/members/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+        body: body.toString()
+      });
 
- function handleLogin(event) {
- event.preventDefault();
+        if (!res.ok) throw new Error("로그인 실패");
 
- const userID = event.target.userID.value;
-     const userPW = event.target.userPW.value;
+        const data = await res.json();
+        localStorage.setItem("token", data.accessToken); // 여기가 핵심!
+        alert("로그인 성공!");
+        location.href = "/index.html"; // 혹은 main 화면으로 이동
 
-     if (userID && PW) {
-       localStorage.setItem("userID", PW);
-       alert("로그인 되었습니다!");
-       window.location.href = "/index.html";
-     } else {
-       alert("아이디와 비밀번호를 모두 입력하세요.");
-     }
-   }
+      } catch (err) {
+        alert(err.message);
+      }
+    });
 </script>
 
 </body>

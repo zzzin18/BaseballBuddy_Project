@@ -8,8 +8,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Entity
 @Getter @Setter
@@ -18,18 +18,25 @@ public class ReviewPost extends Post {
     private Stadium stadium;
     @Enumerated(EnumType.STRING)
     private FilterTag filter;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<FilterTag> filterTags = new ArrayList<>();
     @ElementCollection
+
     private List<String> imageList = new ArrayList<>();
+
+
+    protected ReviewPost() { super(); }
 
     public ReviewPost(String postTitle, String postDetail, Member postMember, Stadium stadium, FilterTag filter) {
         super(postTitle, postDetail, postMember);
+        this.postMember = postMember;
         this.stadium = stadium;
         this.filter = filter;
     }
 
     public void updateReviewPost(String postTitle, String postDetail, Stadium stadium, FilterTag filter, List<String> imageList) {
-        super.setPostTitle(postTitle);
-        super.setPostDetail(postDetail);
+        this.setPostTitle(postTitle);
+        this.setPostDetail(postDetail);
         this.stadium = stadium;
         this.filter = filter;
         if (imageList != null && !imageList.isEmpty()) {
@@ -50,5 +57,29 @@ public class ReviewPost extends Post {
     public boolean delete(Member currentMember) {
         return true;
     }
+
+    public void addLike(Member member) {
+        likedMembers.add(member);
+    }
+
+    public void removeLike(Member member) {
+        likedMembers.remove(member);
+    }
+    public int getLike() {
+        return likedMembers.size();
+    }
+    public String getNickname() {
+        return postMember.getNickname();
+    }
+
+    @Getter
+    @ManyToMany
+    @JoinTable(
+            name = "reviewpost_likes",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "member_id")
+    )
+    private Set<Member> likedMembers = new HashSet<>();
+
 }
 

@@ -1,65 +1,259 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>구장 후기 작성</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>구장 후기 글 작성</title>
+    <style>
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          margin: 0;
+          padding: 2rem;
+          background-color: #f9fafb;
+          color: #1f2937;
+        }
+
+        h1 {
+          font-size: 2rem;
+          font-weight: 700;
+          margin-bottom: 2rem;
+          text-align: center;
+        }
+
+        form {
+          max-width: 700px;
+          margin: 0 auto;
+          background-color: white;
+          padding: 2rem;
+          border-radius: 1rem;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        label {
+          display: block;
+          font-weight: 600;
+          margin-bottom: 0.5rem;
+          margin-top: 1.5rem;
+        }
+
+        select,
+        input[type="text"],
+        textarea,
+        input[type="file"] {
+          width: 100%;
+          padding: 0.75rem;
+          border: 1px solid #d1d5db;
+          border-radius: 0.5rem;
+          font-size: 1rem;
+          background-color: #f9fafb;
+          transition: border-color 0.2s;
+        }
+
+        select:focus,
+        input:focus,
+        textarea:focus {
+          outline: none;
+          border-color: #3b82f6;
+          background-color: #fff;
+        }
+
+        fieldset {
+          border: none;
+          padding: 0;
+          margin-top: 1rem;
+        }
+
+        legend {
+          font-weight: 600;
+          margin-bottom: 0.5rem;
+        }
+
+        #filter-fieldset label {
+          display: inline-flex;
+          align-items: center;
+          margin-right: 1rem;
+          margin-bottom: 0.5rem;
+          font-size: 0.95rem;
+        }
+
+        #filter-fieldset input[type="checkbox"] {
+          margin-right: 0.4rem;
+        }
+
+        button[type="submit"] {
+          margin-top: 2rem;
+          background-color: #2563eb;
+          color: white;
+          border: none;
+          border-radius: 0.5rem;
+          padding: 0.75rem 1.5rem;
+          font-weight: bold;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: background-color 0.2s;
+          width: 100%;
+        }
+
+        button[type="submit"]:hover {
+          background-color: #1d4ed8;
+        }
+    </style>
 </head>
 <body>
-<header>
-    <div class="header-content">
-        <h1>게시글 작성하기</h1>
-    </div>
-</header>
+<h1>구장 후기 글 작성</h1>
+<form id="review-form">
+    <label for="stadium">구장 선택</label>
+    <select id="stadium" name="stadium" required>
+        <option value="">-- 구장을 선택하세요 --</option>
+    </select>
 
-<main>
-    <div>
-        <h2>구장 후기 작성</h2>
-        <form>
-            <!-- 구장 선택 -->
-            <label for="stadium">구장 선택:</label>
-            <select id="stadium" name="stadium" required>
-                <option value="">-- 구장을 선택하세요 --</option>
-                <option value="잠실">인천</option>
-                <option value="사직">고척</option>
-                <option value="문학">잠실</option>
-                <option value="대구">수원</option>
-                <option value="수원">대전</option>
-                <option value="수원">대구</option>
-                <option value="수원">광주</option>
-                <option value="수원">부산</option>
-                <option value="수원">창원</option>
-                <option value="수원">기타</option>
-            </select>
+    <fieldset id="filter-fieldset">
+        <legend>필터 선택</legend>
+    </fieldset>
 
-            <!-- 필터 선택 -->
-            <fieldset style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <legend>카테고리 (1개 선택)</legend>
-                <label><input type="radio" name="filter" value="1루" required>1루</label>
-                <label><input type="radio" name="filter" value="3루">3루</label>
-                <label><input type="radio" name="filter" value="외야">외야</label>
-                <label><input type="radio" name="filter" value="음식">음식</label>
-                <label><input type="radio" name="filter" value="공용시설">공용시설</label>
-                <label><input type="radio" name="filter" value="주차">주차</label>
-                <label><input type="radio" name="filter" value="굿즈샵">굿즈샵</label>
-                <label><input type="radio" name="filter" value="기타">기타</label>
-            </fieldset>
+    <label for="title">제목:</label>
+    <input type="text" id="title" name="title" required />
 
-            <!-- 제목, 내용 -->
-            <label for="title">제목:</label>
-            <input type="text" id="title" name="title" required>
+    <label for="content">내용:</label>
+    <textarea id="content" name="content" rows="6" required></textarea>
 
-            <label for="content">내용:</label>
-            <textarea id="content" name="content" rows="6" required></textarea>
+    <label for="image">사진 첨부:</label>
+    <input type="file" id="image" name="image" accept="image/*" />
 
-            <!-- 이미지 업로드 -->
-            <label for="image">사진 첨부:</label>
-            <input type="file" id="image" name="image" accept="image/*">
+    <button type="submit">작성 완료</button>
+</form>
 
-            <!-- 제출 -->
-            <button type="submit" class="btn">작성 완료</button>
-        </form>
-    </div>
-</main>
+<script>
+    const form = document.getElementById("review-form");
+const stadiumSelect = document.getElementById("stadium");
+const filterFieldset = document.getElementById("filter-fieldset");
+
+// ✅ 전역 변수 설정
+const selectedFilters = [];
+
+const stadiumMap = {
+  INCHEON: "인천",
+  JAMSHIL: "잠실",
+  GOCHEOK: "고척",
+  SUWON: "수원",
+  DAEJEON: "대전",
+  DAEGU: "대구",
+  GWANGJU: "광주",
+  BUSAN: "부산",
+  CHANGWON: "창원",
+  ETC: "기타"
+};
+
+const stadiumMapReverse = Object.fromEntries(
+  Object.entries(stadiumMap).map(([eng, kor]) => [kor, eng])
+);
+
+const filterTagMap = {
+  FIRSTBASE: "1루",
+  THIRDBASE: "3루",
+  OUTFIELD: "외야",
+  FOOD: "음식",
+  PARKING: "주차",
+  GOODS: "굿즈샵",
+  ETC: "기타"
+};
+
+// ✅ 로그인 사용자 정보 가져오기
+fetch("/review-posts/me")
+  .then(res => {
+    if (!res.ok) throw new Error("로그인 필요");
+    return res.json();
+  })
+  .then(userData => {
+    console.log("로그인한 사용자 정보:", userData);
+  })
+  .catch(err => {
+    console.log(err.message);
+  });
+
+// ✅ stadium 목록 가져오기
+fetch("/enums/stadium")
+  .then(res => res.json())
+  .then(stadiums => {
+    stadiums.forEach(stadium => {
+      const option = document.createElement("option");
+      option.value = stadiumMap[stadium];
+      option.textContent = stadiumMap[stadium];
+      stadiumSelect.appendChild(option);
+    });
+  });
+
+// ✅ filter 목록 가져오기
+fetch("/enums/filterTag")
+  .then(res => res.json())
+  .then(filterTags => {
+    filterTags.forEach(tag => {
+      const label = document.createElement("label");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.value = tag;
+      checkbox.name = "filterTags";
+      label.appendChild(checkbox);
+      label.appendChild(document.createTextNode(filterTagMap[tag]));
+      filterFieldset.appendChild(label);
+    });
+  });
+
+// ✅ submit 이벤트 핸들러
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(form);
+  const stadiumKor = formData.get("stadium");
+  const title = formData.get("title");
+  const content = formData.get("content");
+
+  // 필터 선택값 가져오기
+  selectedFilters.length = 0;
+  selectedFilters.push(...[...form.querySelectorAll("input[name='filterTags']:checked")].map(el => el.value));
+
+  if (!stadiumKor) {
+    alert("구장을 선택해주세요");
+    return;
+  }
+  if (selectedFilters.length === 0) {
+    alert("필터를 하나 이상 선택해주세요");
+    return;
+  }
+
+  const stadium = stadiumMapReverse[stadiumKor];
+
+  const body = {
+    postTitle: title,
+    postDetail: content,
+    stadium: stadium,
+    filterTags: selectedFilters
+  };
+
+  try {
+    const token = localStorage.getItem("token");
+    const res = await fetch("/review-posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (res.ok) {
+      alert("게시글 작성 완료!");
+      form.reset();
+      location.href = "/review.html";
+    } else {
+      const errData = await res.json();
+      alert("작성 실패: " + (errData.message || res.statusText));
+    }
+  } catch (error) {
+    alert("오류 발생: " + error.message);
+  }
+});
+
+</script>
 </body>
 </html>

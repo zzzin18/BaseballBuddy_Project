@@ -6,39 +6,44 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class MainController {
 
-    // 메인 페이지
     @GetMapping("/")
     public String home() {
-        return "index";  // index.html을 렌더링
-    }
+        return "redirect:/index.html";    }
 
-    // 로그인 페이지
-    @GetMapping("/login")
+    @GetMapping("/members/login")
     public String login() {
-        return "login";  // login.html을 렌더링
+        return "redirect:/login.html";    }
+
+    @GetMapping("/registration")
+    public String registration() {
+        return "redirect:/registration.html";
+    }
+    @GetMapping("/myPage")
+    public String myPage() {
+        return "redirect:/myPage.html";    }
+
+    @GetMapping("/attendCalendar")
+    public String attendCalendar() {
+        return "redirect:/attendCalendar.html";
+    }
+    @GetMapping("/attendRecommendQuestion")
+    public String attendRecommendQuestion() {
+        return "redirect:/attendRecommendQuestion.html";
+    }
+    @GetMapping("/attendRecommendResult")
+    public String attendRecommendResult() {
+        return "redirect:/attendRecommendResult.html";
     }
 
-    // 회원가입 페이지
-    @GetMapping("/signup")
-    public String signup() {
-        return "signup";  // signup.html을 렌더링
+    //추천결과
+    //댓글?
+    @GetMapping("/review")
+    public String review() {
+        return "redirect:/review.html";
+    }
+    @GetMapping("/reviewPost")
+    public String reviewPost() {
+        return "redirect:/reviewPost.html";
     }
 
-    // 직관 게시판 페이지
-    @GetMapping("/posts/1")
-    public String posts1() {
-        return "posts";  // posts.html을 렌더링
-    }
-
-    // 자리 게시판 페이지
-    @GetMapping("/posts/2")
-    public String posts2() {
-        return "posts";  // posts.html을 렌더링
-    }
-
-    // 나눔 게시판 페이지
-    @GetMapping("/posts/3")
-    public String posts3() {
-        return "posts";  // posts.html을 렌더링
-    }
 }

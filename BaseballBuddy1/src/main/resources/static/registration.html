@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>회원가입</title>
+    <style>
+        .form-container {
+          max-width: 400px;
+          margin: 3rem auto;
+          padding: 2rem;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          box-shadow: 2px 2px 12px rgba(0,0,0,0.1);
+        }
+        .form-container h2 {
+          text-align: center;
+        }
+        .form-container input {
+          display: block;
+          width: 100%;
+          padding: 0.75rem;
+          margin-top: 0.75rem;
+          margin-bottom: 0.25rem;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+        }
+        .form-container p {
+          color: red;
+          font-size: 0.9rem;
+          margin-top: 0;
+          margin-bottom: 0.75rem;
+          height: 1.2rem; /* 공간 확보 */
+        }
+        .form-container button {
+          width: 100%;
+          padding: 0.75rem;
+          background-color: #646cff;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+        .form-container button:hover {
+          background-color: #535bf2;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>회원가입</h2>
+    <form id="registration-form" novalidate>
+        <input name="username" placeholder="아이디" required />
+        <p id="username-error"></p>
+
+        <input name="password" type="password" placeholder="비밀번호" required />
+        <p id="password-error"></p>
+
+        <input name="nickname" placeholder="닉네임" required />
+
+        <input name="email" type="email" placeholder="이메일" required />
+        <p id="email-error"></p>
+
+        <button type="submit">가입하기</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('registration-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const username = e.target.username.value.trim();
+      const password = e.target.password.value.trim();
+      const nickname = e.target.nickname.value.trim();
+      const email = e.target.email.value.trim();
+
+      let valid = true;
+      const errors = {
+        username: '',
+        password: '',
+        email: ''
+      };
+
+      // 비밀번호 길이 검사
+      if (password.length < 6) {
+        errors.password = '비밀번호는 6자리 이상이어야 합니다';
+        valid = false;
+      }
+
+      // 아이디 중복 체크
+    try {
+    const idRes = await fetch(`/members/check-id?memberId=${encodeURIComponent(username)}`);
+    const idExists = await idRes.json();
+    if (idExists) {
+          errors.username = '이미 사용 중인 아이디입니다';
+        valid = false;
+    }
+    } catch (err) {
+    console.error('아이디 중복 확인 실패:', err);
+    }
+
+    // 이메일 중복 체크
+    try {
+    const emailRes = await fetch(`/members/check-email?email=${encodeURIComponent(email)}`);
+     const emailExists = await emailRes.json();
+    if (emailExists) {
+       errors.email = '이미 사용 중인 이메일입니다';
+       valid = false;
+    }
+    } catch (err) {
+    console.error('이메일 중복 확인 실패:', err);
+}
+
+
+      // 에러 메시지 보여주기
+      document.getElementById('username-error').textContent = errors.username;
+      document.getElementById('password-error').textContent = errors.password;
+      document.getElementById('email-error').textContent = errors.email;
+
+      if (!valid) return;
+
+      try {
+        const res = await fetch('/members/registration', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            memberId: username,
+            memberPw: password,
+            nickname: nickname,
+            email: email
+          })
+        });
+
+        if (res.ok) {
+          alert('회원가입 완료!');
+          window.location.href = '/login.html';
+        } else {
+          const errorText = await res.text();
+          console.error('회원가입 실패:', errorText);
+          alert('회원가입 실패: ' + errorText);
+        }
+      } catch (err) {
+        console.error('서버 요청 실패:', err);
+        alert('서버 요청 실패');
+      }
+    });
+</script>
+
+</body>
+</html>

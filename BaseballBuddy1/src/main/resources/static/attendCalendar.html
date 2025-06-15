@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>직관 모집 달력</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    h2, h3 {
+      margin-bottom: 0.5rem;
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+    .calendar {
+      flex: 1 1 250px;
+    }
+    .post-list {
+      flex: 2 1 600px;
+    }
+    #write-post-btn {
+      display: block;
+      margin-bottom: 1rem;
+      padding: 0.5rem 1rem;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .post-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background-color: #f9fafb;
+    }
+    .post-card h4 {
+      margin: 0 0 0.3rem 0;
+      font-size: 1.1rem;
+      color: #1f2937;
+    }
+    .post-card .author {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-bottom: 0.5rem;
+    }
+    .post-card .content {
+      font-size: 0.95rem;
+      color: #374151;
+      white-space: pre-wrap;
+    }
+    .no-posts {
+      color: #6b7280;
+    }
+    /* 댓글 영역 */
+    #comments-container {
+      border-top: 2px solid #2563eb;
+      margin-top: 1rem;
+      padding-top: 1rem;
+    }
+    #comments-container > div {
+      border-top: 1px solid #ddd;
+      padding: 0.5rem 0;
+      font-size: 0.9rem;
+      color: #333;
+    }
+    #comment-write-section {
+      margin-top: 1rem;
+    }
+    #comment-input {
+      width: 100%;
+      resize: vertical;
+      font-size: 1rem;
+      padding: 0.5rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    #comment-submit-btn {
+      margin-top: 0.5rem;
+      padding: 0.4rem 1rem;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .show-comments-btn {
+      margin-top: 0.5rem;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.9rem;
+      color: #2563eb;
+      background: none;
+      border: 1px solid #2563eb;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h2>직관 모집 달력</h2>
+<div class="container">
+  <div class="calendar">
+    <label for="datePicker">날짜 선택:</label><br />
+    <input type="date" id="datePicker" />
+  </div>
+
+  <div class="post-list">
+    <button id="write-post-btn">글 쓰기</button>
+    <h3 id="post-list-title"></h3>
+    <div id="posts"></div>
+    <div id="comments-container"></div>
+    <div id="comment-write-section" style="display:none;">
+      <textarea id="comment-input" rows="3" placeholder="댓글을 입력하세요..."></textarea><br />
+      <button id="comment-submit-btn">댓글 작성</button>
+    </div>
+    <p id="no-posts" class="no-posts" style="display:none;">해당 날짜에 작성된 글이 없습니다.</p>
+  </div>
+</div>
+
+<script>
+  const datePicker = document.getElementById('datePicker');
+  const postsContainer = document.getElementById('posts');
+  const noPostsP = document.getElementById('no-posts');
+  const postListTitle = document.getElementById('post-list-title');
+  const writePostBtn = document.getElementById('write-post-btn');
+  const commentsContainer = document.getElementById('comments-container');
+  const commentWriteSection = document.getElementById('comment-write-section');
+  const commentInput = document.getElementById('comment-input');
+  const commentSubmitBtn = document.getElementById('comment-submit-btn');
+
+
+  let currentPostId = null;
+
+  function getTodayDate() {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = ('0' + (d.getMonth() + 1)).slice(-2);
+    const day = ('0' + d.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  }
+
+  async function checkLogin() {
+  try {
+    const res = await fetch('/members/me', {
+      credentials: 'include'
+    });
+    if (res.ok) {
+      const user = await res.json();
+      currentUser = user; // 여기서 저장!
+      return true;
+    } else {
+      return false;
+    }
+  } catch {
+    return false;
+  }
+}
+
+  async function fetchPostsByDate(date) {
+  let data;
+  try {
+    const res = await fetch(`/attend-posts/by-date?date=${date}`);
+
+    if (!res.ok) throw new Error('글 불러오기 실패');
+    const data = await res.json();
+
+    console.log("백엔드에서 받아온 글 목록:", data);
+
+    postListTitle.textContent = `${date} 모집 글`;
+    postsContainer.innerHTML = '';
+    commentsContainer.innerHTML = '';
+    commentWriteSection.style.display = 'none';
+    commentInput.value = '';
+    currentPostId = null;
+
+    if (data.length === 0) {
+      noPostsP.style.display = 'block';
+      return;
+    } else {
+      noPostsP.style.display = 'none';
+    }
+
+    // 게시글 렌더링 시 댓글 버튼도 생성하고 이벤트 붙이기
+data.forEach(post => {
+  const div = document.createElement('div');
+  div.className = 'post-card';
+  div.innerHTML = `
+    <h4>${post.postTitle}</h4>
+    <div class="author">작성자: ${post.nickname}</div>
+    <div class="content">${post.postDetail}</div>
+    <button class="show-comments-btn" data-postid="${post.postID}">댓글 보기</button>
+  `;
+  postsContainer.appendChild(div);
+});
+
+
+async function renderComments(postId) {
+  commentsContainer.innerHTML = '';
+  try {
+    const res = await fetch(`/comments/by-post/${postId}`);
+    if (!res.ok) throw new Error('댓글 불러오기 실패');
+    const comments = await res.json();
+
+    if (comments.length === 0) {
+      commentsContainer.innerHTML = '<p>댓글이 없습니다.</p>';
+      return;
+    }
+
+    comments.forEach(c => {
+  const div = document.createElement('div');
+  div.className = 'comment';
+  div.innerHTML = `
+    <div class="author">작성자: ${c.nickname}</div>
+    <div class="content">${c.content}</div>
+  `;
+  commentsContainer.appendChild(div);
+});
+
+
+
+  } catch (err) {
+    console.error(err);
+    commentsContainer.innerHTML = '<p>댓글을 불러오는 데 오류가 발생했어요.</p>';
+  }
+}
+
+
+    // 이벤트는 렌더링 이후 별도로 걸어주기
+  document.querySelectorAll('.show-comments-btn').forEach(btn => {
+  btn.addEventListener('click', async (e) => {
+    const postId = e.currentTarget.dataset.postid;
+    currentPostId = postId;
+
+    if (!currentPostId) {
+      alert('게시글 ID가 없습니다.');
+      return;
+    }
+
+    await renderComments(currentPostId);
+
+    const loggedIn = await checkLogin();
+    commentWriteSection.style.display = loggedIn ? 'block' : 'none';
+  });
+});
+  } catch (err) {
+    console.error(err);
+    noPostsP.style.display = 'block';
+    noPostsP.textContent = '데이터를 불러오는 중 오류가 발생했습니다.';
+    return;
+  }
+}
+
+
+
+  const currentUserName = '현재로그인유저'; // 실제로는 로그인 API에서 받아야 함
+
+ commentSubmitBtn.addEventListener('click', async () => {
+  const loggedIn = await checkLogin();
+  if (!loggedIn) {
+    alert('댓글 작성은 로그인 후 이용 가능합니다.');
+    window.location.href = '/login.html';
+    return;
+  }
+
+  const content = commentInput.value.trim();
+  if (content === '') {
+    alert('댓글 내용을 입력해주세요.');
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/posts/${currentPostId}/comments`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ content })
+    });
+
+    if (!res.ok) throw new Error('댓글 저장 실패');
+    commentInput.value = '';
+    await renderComments(currentPostId);
+  } catch (err) {
+    alert('댓글 작성에 실패했어요. 다시 시도해 주세요.');
+  }
+});
+
+
+  writePostBtn.addEventListener('click', async () => {
+    const loggedIn = await checkLogin();
+    if (!loggedIn) {
+      alert('로그인이 필요한 서비스입니다.');
+      //window.location.href = '/login.html';
+      return;
+    }
+    window.location.href = '/attendPost.html';
+  });
+
+  // 초기 날짜 오늘로 세팅 + 게시글 렌더링
+  datePicker.value = getTodayDate();
+  fetchPostsByDate(datePicker.value);
+
+  datePicker.addEventListener('change', () => {
+    fetchPostsByDate(datePicker.value);
+  });
+</script>
+
+</body>
+</html>
